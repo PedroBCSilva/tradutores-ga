@@ -11,5 +11,5 @@ Also I've found this Visual Code Extension that can be pretty helpful [Lex Flex 
 ### How to run
 For those who are not familiar using flex please use the following steps to run the project, using mac environment as example:
 * `flex file.lex`
-* `gcc lex.yy.c -o compiledFlexCode`
-* `./compiledFlexCode input.txt`
+* `gcc lex.yy.c -o compiledFlexCode.out`
+* `./compiledFlexCode.out input.txt`
