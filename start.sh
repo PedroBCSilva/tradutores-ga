@@ -1,3 +1,3 @@
-flex main.lex
-gcc lex.yy.c -o compiledCode.out
-./compiledCode.out sampleCode.txt
+flex -o TextLexicalAnalyzer.cpp main.lex 
+g++ -std=c++11 -o TextLexicalAnalyzer TextLexicalAnalyzer.cpp -w
+./TextLexicalAnalyzer sampleCode.txt
