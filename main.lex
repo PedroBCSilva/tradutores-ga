@@ -4,31 +4,83 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 
 int operations = 0;
+int variable = 0;
+
+void castIntToString(int number, char* string){
+	sprintf(string, "%d", number);
+}
+
+void printKeyword(char* keyword, char* word){
+	printf("[%s, %s]", keyword, word);
+}
+
+void removeSubstr (char *string, char *sub) {
+	char *match;
+	int len = strlen(sub);
+	while ((match = strstr(string, sub))) {
+		*match = '\0';
+		strcat(string, match+len);
+	}
+}
+
+void stringSplit(char* string, char* token){
+	char *part = strtok(string, token);
+	while(part != NULL)
+	{
+		variable++;
+		char stringId[50];
+		castIntToString(variable, stringId);
+		printKeyword("id", stringId);
+		part = strtok(NULL, token);
+	}
+}
+
 %}
 
 DIGIT [0-9]+
-VARIABLE [a-zA-Z][a-z0-9]*
+LETTERS_AND_DIGITS [a-zA-Z0-9]*
 
 EQUAL_OP [=]
+RELATIONAL_OP (\ )?{EQUAL_OP}|==|>=|<=|=(\ )?
+
 SUM_OP [+]
 SUB_OP [-]
 MULT_OP [*]
 DIV_OP [/]
 
-OPERATOR {SUM_OP}*|{SUB_OP}*|{MULT_OP}*|{DIV_OP}*
+TYPE (int|byte|boolean|char|long|float|double|short)
+RETURN_TYPE 			(void|{TYPE})(\ )+
+RESERVED_KEYWORD ({TYPE}|print|printf|abstract|assert|break|case|catch|class|const|continue|default|do|else|enum|extends|false|final|finally|for|goto|if|implements|import|instanceof|interface|native|new|null|package|private|protected|public|return|static|strictfp|super|switch|synchronized|this|throw|throws|transient|true|try|volatile|while)
 
-EXPRESSION {DIGIT}{OPERATOR}{DIGIT}[{OPERATOR}{DIGIT}]*
+VARIABLE ({TYPE}(\ )+{LETTERS_AND_DIGITS}(,(\ )?{LETTERS_AND_DIGITS})*)
+ARITHMETIC_OPERATOR {SUM_OP}|{SUB_OP}|{MULT_OP}|{DIV_OP}
+OPERATION {DIGIT}{ARITHMETIC_OPERATOR}{DIGIT}[{ARITHMETIC_OPERATOR}{DIGIT}]*
 
-RESERVED_KEYWORD abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|double|do|else|enum|extends|false|final|finally|float|for|goto|if|implements|import|instanceof|int|interface|long|native|new|null|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|true|try|void|volatile|while
+%x COMMENT
 
 %%
 
-{VARIABLE}{EQUAL_OP}{EXPRESSION} operations++;
-
 {RESERVED_KEYWORD} {
-	printf("[reserved_word, %s]", yytext);
+	printKeyword("reserved_word", yytext);
+}
+{RELATIONAL_OP} {
+	if(!strcmp("=",yytext)){
+		printKeyword("Equal_Op", yytext);
+	}else{
+		printKeyword("Relational_Op", yytext);
+	}
+}
+
+{VARIABLE} {
+	char typeWord[100];
+	memset(typeWord, '\0', sizeof(typeWord));
+	strcpy(typeWord, yytext);
+	strtok(typeWord, " ");
+	printKeyword("reserved_word", typeWord);
+	stringSplit(yytext,",");
 }
 
 %%
