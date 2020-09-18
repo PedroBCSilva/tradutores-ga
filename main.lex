@@ -94,6 +94,10 @@ OPERATION {DIGIT}{ARITHMETIC_OPERATOR}{DIGIT}[{ARITHMETIC_OPERATOR}{DIGIT}]*
 	printKeyword("float_num", yytext);
 }
 
+{ARITHMETIC_OPERATOR} {
+	printKeyword("arithmetic_operator", yytext);
+}
+
 %%
 
 int main(int argc, char *argv[]){
