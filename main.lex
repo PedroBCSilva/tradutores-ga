@@ -44,7 +44,9 @@ DIGIT [0-9]+
 LETTERS_AND_DIGITS [a-zA-Z0-9]*
 
 EQUAL_OP [=]
-RELATIONAL_OP (\ )?{EQUAL_OP}|==|>=|<=|=(\ )?
+RELATIONAL_OP (\ )*{EQUAL_OP}|==|>=|<=|=(\ )*
+SINGLE_SPACE (\ )+
+FLOAT_NUM [0-9]+[.][0-9]+
 
 SUM_OP [+]
 SUB_OP [-]
@@ -55,7 +57,7 @@ TYPE (int|byte|boolean|char|long|float|double|short)
 RETURN_TYPE 			(void|{TYPE})(\ )+
 RESERVED_KEYWORD ({TYPE}|print|printf|abstract|assert|break|case|catch|class|const|continue|default|do|else|enum|extends|false|final|finally|for|goto|if|implements|import|instanceof|interface|native|new|null|package|private|protected|public|return|static|strictfp|super|switch|synchronized|this|throw|throws|transient|true|try|volatile|while)
 
-VARIABLE ({TYPE}(\ )+{LETTERS_AND_DIGITS}(,(\ )?{LETTERS_AND_DIGITS})*)
+VARIABLE ({TYPE}{SINGLE_SPACE}{LETTERS_AND_DIGITS}(,(\ )?{LETTERS_AND_DIGITS})*)
 ARITHMETIC_OPERATOR {SUM_OP}|{SUB_OP}|{MULT_OP}|{DIV_OP}
 OPERATION {DIGIT}{ARITHMETIC_OPERATOR}{DIGIT}[{ARITHMETIC_OPERATOR}{DIGIT}]*
 
@@ -66,6 +68,7 @@ OPERATION {DIGIT}{ARITHMETIC_OPERATOR}{DIGIT}[{ARITHMETIC_OPERATOR}{DIGIT}]*
 {RESERVED_KEYWORD} {
 	printKeyword("reserved_word", yytext);
 }
+
 {RELATIONAL_OP} {
 	if(!strcmp("=",yytext)){
 		printKeyword("Equal_Op", yytext);
@@ -81,6 +84,14 @@ OPERATION {DIGIT}{ARITHMETIC_OPERATOR}{DIGIT}[{ARITHMETIC_OPERATOR}{DIGIT}]*
 	strtok(typeWord, " ");
 	printKeyword("reserved_word", typeWord);
 	stringSplit(yytext,",");
+}
+
+{DIGIT} {
+	printKeyword("num", yytext);
+}
+
+{FLOAT_NUM} {
+	printKeyword("float_num", yytext);
 }
 
 %%
