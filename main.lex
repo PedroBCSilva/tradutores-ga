@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+#include <string>
+
+using namespace std;
 
 int operations = 0;
 int variable = 0;
@@ -63,7 +66,8 @@ TYPE (int|byte|boolean|char|long|float|double|short)
 RETURN_TYPE 			(void|{TYPE})(\ )+
 RESERVED_KEYWORD ({TYPE}|print|printf|abstract|assert|break|case|catch|class|const|continue|default|do|else|enum|extends|false|final|finally|for|goto|if|implements|import|instanceof|interface|native|new|null|package|private|protected|public|return|static|strictfp|super|switch|synchronized|this|throw|throws|transient|true|try|volatile|while)
 
-VARIABLE ({TYPE}{SINGLE_SPACE}{LETTERS_AND_DIGITS}(,(\ )?{LETTERS_AND_DIGITS})*)
+VARIABLE ({TYPE}{SINGLE_SPACE}{LETTERS_AND_DIGITS}(,(\ )*{LETTERS_AND_DIGITS})*)
+
 ARITHMETIC_OPERATOR {SUM_OP}|{SUB_OP}|{MULT_OP}|{DIV_OP}
 OPERATION {DIGIT}{ARITHMETIC_OPERATOR}{DIGIT}[{ARITHMETIC_OPERATOR}{DIGIT}]*
 
@@ -91,7 +95,8 @@ COMMENT_BLOCK "/*"[^*/]*"*/"
 }
 
 {RELATIONAL_OP} {
-	if(!strcmp("=",yytext)){
+	string word(yytext);
+	if(!word.compare("=")){
 		printKeyword("Equal_Op", yytext);
 	}else{
 		printKeyword("Relational_Op", yytext);
@@ -99,11 +104,10 @@ COMMENT_BLOCK "/*"[^*/]*"*/"
 }
 
 {VARIABLE} {
-	char typeWord[100];
-	memset(typeWord, '\0', sizeof(typeWord));
-	strcpy(typeWord, yytext);
-	strtok(typeWord, " ");
-	printKeyword("reserved_word", typeWord);
+	string typeWord(yytext);
+	char* c_typeWord = typeWord.c_str();
+	strtok(c_typeWord, " ");
+	printKeyword("reserved_word", c_typeWord);
 	stringSplit(yytext,",");
 }
 
