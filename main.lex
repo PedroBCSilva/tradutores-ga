@@ -38,6 +38,12 @@ void stringSplit(char* string, char* token){
 	}
 }
 
+void commentLine(){
+}
+
+void spaces(){
+}
+
 %}
 
 DIGIT [0-9]+
@@ -61,12 +67,27 @@ VARIABLE ({TYPE}{SINGLE_SPACE}{LETTERS_AND_DIGITS}(,(\ )?{LETTERS_AND_DIGITS})*)
 ARITHMETIC_OPERATOR {SUM_OP}|{SUB_OP}|{MULT_OP}|{DIV_OP}
 OPERATION {DIGIT}{ARITHMETIC_OPERATOR}{DIGIT}[{ARITHMETIC_OPERATOR}{DIGIT}]*
 
-%x COMMENT
+SPACES_AND_TABS [ \t\n\r]
+COMMENT ["//"].*
+
+COMMENT_BLOCK "/*"[^*/]*"*/"
 
 %%
+{VARIABLE}{EQUAL_OP}{OPERATION} operations++;
 
 {RESERVED_KEYWORD} {
 	printKeyword("reserved_word", yytext);
+}
+
+{COMMENT} {
+   commentLine();
+}
+{COMMENT_BLOCK} {
+   commentLine();
+}
+
+{SPACES_AND_TABS} {
+    spaces();
 }
 
 {RELATIONAL_OP} {
@@ -107,3 +128,4 @@ int main(int argc, char *argv[]){
 	printf("Amount of operations: %d\n", operations);
 	return 0;
 }
+
