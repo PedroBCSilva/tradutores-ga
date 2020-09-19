@@ -4,42 +4,17 @@
 
 #include <stdio.h>
 #include <time.h>
-#include <string.h>
 #include <string>
+#include <sstream>
+#include <vector>
+#include <map>
+#include "common/stringControls.h"
 
 using namespace std;
 
 int operations = 0;
-int variable = 0;
-
-void castIntToString(int number, char* string){
-	sprintf(string, "%d", number);
-}
-
-void printKeyword(char* keyword, char* word){
-	printf("[%s, %s]", keyword, word);
-}
-
-void removeSubstr (char *string, char *sub) {
-	char *match;
-	int len = strlen(sub);
-	while ((match = strstr(string, sub))) {
-		*match = '\0';
-		strcat(string, match+len);
-	}
-}
-
-void stringSplit(char* string, char* token){
-	char *part = strtok(string, token);
-	while(part != NULL)
-	{
-		variable++;
-		char stringId[50];
-		castIntToString(variable, stringId);
-		printKeyword("id", stringId);
-		part = strtok(NULL, token);
-	}
-}
+int variableIds = 0;
+map<int, string> variables;
 
 void commentLine(){
 }
@@ -80,7 +55,7 @@ COMMENT_BLOCK "/*"[^*/]*"*/"
 {VARIABLE}{EQUAL_OP}{OPERATION} operations++;
 
 {RESERVED_KEYWORD} {
-	printKeyword("reserved_word", yytext);
+	stringcontrol::printKeyword("reserved_word", yytext);
 }
 
 {COMMENT} {
@@ -90,37 +65,41 @@ COMMENT_BLOCK "/*"[^*/]*"*/"
    commentLine();
 }
 
-{SPACES_AND_TABS} {
-    spaces();
-}
-
 {RELATIONAL_OP} {
 	string word(yytext);
 	if(!word.compare("=")){
-		printKeyword("Equal_Op", yytext);
+		stringcontrol::printKeyword("Equal_Op", yytext);
 	}else{
-		printKeyword("Relational_Op", yytext);
+		stringcontrol::printKeyword("Relational_Op", yytext);
 	}
 }
 
 {VARIABLE} {
-	string typeWord(yytext);
-	char* c_typeWord = typeWord.c_str();
-	strtok(c_typeWord, " ");
-	printKeyword("reserved_word", c_typeWord);
-	stringSplit(yytext,",");
+	string word(yytext);
+	vector<string> splitted = stringcontrol::stringSplit(word.c_str(),' ');
+	string type = splitted.at(0);
+	stringcontrol::printKeyword("reserved_word", type.c_str());
+	stringcontrol::removeSubstr(&type, &word);
+	splitted = stringcontrol::stringSplit(word.c_str(),',');
+	for(string& part : splitted) {
+		variableIds++;
+		stringcontrol::ltrim(part);
+    	stringcontrol::rtrim(part);
+		variables[variableIds] = part;
+		stringcontrol::printKeyword("id", to_string(variableIds).c_str());
+	}
 }
 
 {DIGIT} {
-	printKeyword("num", yytext);
+	stringcontrol::printKeyword("num", yytext);
 }
 
 {FLOAT_NUM} {
-	printKeyword("float_num", yytext);
+	stringcontrol::printKeyword("float_num", yytext);
 }
 
 {ARITHMETIC_OPERATOR} {
-	printKeyword("arithmetic_operator", yytext);
+	stringcontrol::printKeyword("arithmetic_operator", yytext);
 }
 
 %%
@@ -130,6 +109,10 @@ int main(int argc, char *argv[]){
 	yylex();
 	fclose(yyin);
 	printf("Amount of operations: %d\n", operations);
+	for (std::map<int, string>::iterator it = variables.begin(); it != variables.end(); ++it)
+	{
+		stringcontrol::printKeyword(to_string(it->first).c_str(), it->second.c_str());
+	}
 	return 0;
 }
 
