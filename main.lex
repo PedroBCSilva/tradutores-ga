@@ -38,12 +38,6 @@ void stringSplit(char* string, char* token){
 	}
 }
 
-void commentLine(){
-}
-
-void spaces(){
-}
-
 %}
 
 DIGIT [0-9]+
@@ -77,16 +71,9 @@ COMMENT_BLOCK "/*"[^*/]*"*/"
 	printKeyword("reserved_word", yytext);
 }
 
-{COMMENT} {
-   commentLine();
-}
-{COMMENT_BLOCK} {
-   commentLine();
-}
-
-{SPACES_AND_TABS} {
-    spaces();
-}
+{COMMENT}
+{COMMENT_BLOCK}
+{SPACES_AND_TABS}
 
 {RELATIONAL_OP} {
 	if(!strcmp("=",yytext)){
