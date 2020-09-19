@@ -40,6 +40,7 @@ void stringSplit(char* string, char* token){
 
 %}
 
+STRING_LITERAL (\"[^\n"]+\")
 DIGIT [0-9]+
 LETTERS_AND_DIGITS [a-zA-Z0-9]*
 
@@ -62,20 +63,34 @@ ARITHMETIC_OPERATOR {SUM_OP}|{SUB_OP}|{MULT_OP}|{DIV_OP}
 OPERATION {DIGIT}{ARITHMETIC_OPERATOR}{DIGIT}[{ARITHMETIC_OPERATOR}{DIGIT}]*
 
 SPACES_AND_TABS [ \t\n\r]
-COMMENT ["//"].*
-
-COMMENT_BLOCK "/*"[^*/]*"*/"
+COMMENT "//".*
+COMMENT_BLOCK ("/*"[^*/]*"*/")
 
 %%
+
+{STRING_LITERAL} {
+	char literalString[100];
+	int i=0;
+    int j=0;
+    strcpy(literalString, yytext);
+    char temp[100] = {};
+      for(i=1;i<strlen(literalString)-1;i++){
+        temp[j++]=literalString[i];
+      }
+      strcpy(literalString,temp);
+	printKeyword("string_literal", literalString);
+}
+
+{COMMENT_BLOCK}
+{COMMENT}
+{SPACES_AND_TABS}
+
+
 {VARIABLE}{EQUAL_OP}{OPERATION} operations++;
 
 {RESERVED_KEYWORD} {
 	printKeyword("reserved_word", yytext);
 }
-
-{COMMENT}
-{COMMENT_BLOCK}
-{SPACES_AND_TABS}
 
 {RELATIONAL_OP} {
 	if(!strcmp("=",yytext)){
