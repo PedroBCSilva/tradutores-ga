@@ -5,9 +5,13 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+#include <string>
+#include <map>
 
 int operations = 0;
 int variable = 0;
+
+std::map<std::string, std::string> specialCharacters = {{"(", "l_paren"}, {")", "r_paren"}, {"{", "l_bracket"}, {"}", "​r_bracket"}, {",", "comma"}, {";", "semicolon"}};
 
 void castIntToString(int number, char* string){
 	sprintf(string, "%d", number);
@@ -53,9 +57,13 @@ SUB_OP [-]
 MULT_OP [*]
 DIV_OP [/]
 
+SPECIAL_CHARACTERS (\(|\)|\{|\}|,|;)
+
 TYPE (int|byte|boolean|char|long|float|double|short)
 RETURN_TYPE 			(void|{TYPE})(\ )+
-RESERVED_KEYWORD ({TYPE}|print|printf|abstract|assert|break|case|catch|class|const|continue|default|do|else|enum|extends|false|final|finally|for|goto|if|implements|import|instanceof|interface|native|new|null|package|private|protected|public|return|static|strictfp|super|switch|synchronized|this|throw|throws|transient|true|try|volatile|while)
+
+RESERVED_KEYWORD ({TYPE}|abstract|assert|break|case|class|const|continue|default|enum|extends|false|final|goto|implements|import|instanceof|interface|native|new|null|package|private|protected|public|return|static|strictfp|super|synchronized|this|throw|throws|transient|true|volatile)
+RESERVED_KEYWORD_WITH_OPENING_CHARACTER (print|printf|catch|do|else|for|finally|if|switch|try|while)
 
 VARIABLE ({TYPE}{SINGLE_SPACE}{LETTERS_AND_DIGITS}(,(\ )?{LETTERS_AND_DIGITS})*)
 ARITHMETIC_OPERATOR {SUM_OP}|{SUB_OP}|{MULT_OP}|{DIV_OP}
@@ -67,9 +75,20 @@ COMMENT ["//"].*
 COMMENT_BLOCK "/*"[^*/]*"*/"
 
 %%
+
+{SPECIAL_CHARACTERS} {
+	std::string text(yytext);
+	std::string identifiedSpecialCharacter = specialCharacters[text];
+	printf("[%s, %s]", &identifiedSpecialCharacter[0], yytext);
+}
+
 {VARIABLE}{EQUAL_OP}{OPERATION} operations++;
 
 {RESERVED_KEYWORD} {
+	printKeyword("reserved_word", yytext);
+}
+
+{RESERVED_KEYWORD_WITH_OPENING_CHARACTER}/(\ )?{SPECIAL_CHARACTERS} {
 	printKeyword("reserved_word", yytext);
 }
 
