@@ -63,7 +63,7 @@ TYPE (int|byte|boolean|char|long|float|double|short)
 RETURN_TYPE 			(void|{TYPE})(\ )+
 
 RESERVED_KEYWORD ({TYPE}|abstract|assert|break|case|class|const|continue|default|enum|extends|false|final|goto|implements|import|instanceof|interface|native|new|null|package|private|protected|public|return|static|strictfp|super|synchronized|this|throw|throws|transient|true|volatile)
-RESERVED_KEYWORD_WITH_OPENING_CHARACTER (print|printf|catch|do|else|for|finally|if|switch|try|while)(\ )?
+RESERVED_KEYWORD_WITH_OPENING_CHARACTER (print|printf|catch|do|else|for|finally|if|switch|try|while)
 
 VARIABLE ({TYPE}{SINGLE_SPACE}{LETTERS_AND_DIGITS}(,(\ )?{LETTERS_AND_DIGITS})*)
 ARITHMETIC_OPERATOR {SUM_OP}|{SUB_OP}|{MULT_OP}|{DIV_OP}
@@ -88,6 +88,10 @@ COMMENT_BLOCK "/*"[^*/]*"*/"
 	printKeyword("reserved_word", yytext);
 }
 
+{RESERVED_KEYWORD_WITH_OPENING_CHARACTER}/(\ )?{SPECIAL_CHARACTERS} {
+	printKeyword("reserved_word", yytext);
+}
+
 {COMMENT}
 {COMMENT_BLOCK}
 {SPACES_AND_TABS}
@@ -98,12 +102,6 @@ COMMENT_BLOCK "/*"[^*/]*"*/"
 	}else{
 		printKeyword("Relational_Op", yytext);
 	}
-}
-
-{RESERVED_KEYWORD_WITH_OPENING_CHARACTER}[{SPECIAL_CHARACTERS}]? {
-	if (yytext[strlen(yytext) - 1] == ' ')
-		yytext[strlen(yytext) - 1] = '\0';
-	printKeyword("reserved_word", yytext);
 }
 
 {VARIABLE} {
