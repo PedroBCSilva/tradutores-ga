@@ -33,6 +33,7 @@ DIGIT [0-9]+
 LETTERS_AND_DIGITS [a-zA-Z0-9]*
 
 RELATIONAL_OP (\ )*(==|>=|<=|=|<|>|!==)(\ )*
+LOGICAL_OP (\ )*(&&|\|\|)(\ )*
 SINGLE_SPACE (\ )+
 FLOAT_NUM [0-9]+[.][0-9]+
 
@@ -130,6 +131,10 @@ COMMENT_BLOCK ("/*"[^*/]*"*/")
 	}else{
 		stringcontrol::printKeyword("Relational_Op", yytext);
 	}
+}
+
+{LOGICAL_OP} {
+	stringcontrol::printKeyword("logic_op", yytext);
 }
 
 {ARITHMETIC_OPERATOR} {
