@@ -1,4 +1,3 @@
-
 #include <string>
 #include <stdio.h>
 
@@ -44,7 +43,6 @@ namespace stringcontrol
         return splitted;
     }
 
-   
     bool isSpecialChar(unsigned char c) {
         return (c == ' '  || c == '\n' || c == '\r' ||
                 c == '\t' || c == '\v' || c == '\f' ||

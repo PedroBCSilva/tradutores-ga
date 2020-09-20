@@ -3,28 +3,11 @@
 %{
 
 #include <stdio.h>
-#include <time.h>
-#include <sstream>
-#include <vector>
-#include "common/stringControls.h"
 #include <string.h>
-#include <string>
-#include <map>
 
-using namespace std;
+#include "common/rulesControl.h"
 
-map<string, string> specialCharacters = {{"(", "l_paren"}, {")", "r_paren"}, {"{", "l_bracket"}, {"}", "​r_bracket"}, {",", "comma"}, {";", "semicolon"}, {"&", "ampersand"}};
-
-int operations = 0;
-int variableIds = 0;
-map<string, int> variables;
-
-void addVariable(string name){
-	variableIds++;
-	stringcontrol::removeSpecialChars(&name);
-	variables[name] = variableIds;
-	stringcontrol::printKeyword("id", to_string(variableIds).c_str());
-}
+RulesControl rules;
 
 %}
 
@@ -63,93 +46,51 @@ COMMENT_BLOCK ("/*"[^*/]*"*/")
 {COMMENT}
 
 {STRING_LITERAL} {
-	char literalString[100];
-	int i=0;
-    int j=0;
-    strcpy(literalString, yytext);
-    char temp[100] = {};
-      for(i=1;i<strlen(literalString)-1;i++){
-        temp[j++]=literalString[i];
-      }
-      strcpy(literalString,temp);
-	stringcontrol::printKeyword("string_literal", literalString);
+	rules.stringLiteralRule();
 }
 
 {DIGIT} {
-	stringcontrol::printKeyword("num", yytext);
+	rules.digitRule();
 }
 
 {FLOAT_NUM} {
-	stringcontrol::printKeyword("float_num", yytext);
+	rules.floatNumRule();
 }
 
 {RESERVED_KEYWORD} {
-	stringcontrol::printKeyword("reserved_word", yytext);
+	rules.reservedWordRule();
 }
 
 {RESERVED_KEYWORD_WITH_OPENING_CHARACTER}/(\ )?{SPECIAL_CHARACTERS} {
-	stringcontrol::printKeyword("reserved_word", yytext);
+	rules.reservedWordRule();
 }
 
 {VARIABLE} {
-	string word(yytext);
-	vector<string> splitted = stringcontrol::stringSplit(word.c_str(),' ');
-	string type = splitted.at(0);
-	stringcontrol::printKeyword("reserved_word", type.c_str());
-	stringcontrol::removeSubstr(&type, &word);
-	splitted = stringcontrol::stringSplit(word.c_str(),',');
-	for(string& part : splitted) {
-		addVariable(part);
-	}
+	rules.variableDeclarationRule();
 }
 
 {ARGUMENT} {
-	string word(yytext);
-	vector<string> splitted = stringcontrol::stringSplit(word.c_str(),',');
-	for(string& part : splitted) {
-		stringcontrol::rtrim(part);
-		stringcontrol::ltrim(part);
-		vector<string> splitted = stringcontrol::stringSplit(part.c_str(),' ');
-		string type = splitted.at(0);
-		stringcontrol::removeSpecialChars(&type);
-		stringcontrol::printKeyword("reserved_word", type.c_str());
-		stringcontrol::removeSubstr(&type, &part);
-		addVariable(part);
-	}
+	rules.argumentRule();
 }
 
 {SPECIAL_CHARACTERS} {
-	string text(yytext);
-	string identifiedSpecialCharacter = specialCharacters[text];
-	printf("[%s, %s]", &identifiedSpecialCharacter[0], yytext);
+	rules.specialCharsRule();
 }
 
 {RELATIONAL_OP} {
-	string word(yytext);
-	if(!word.compare("=")){
-		stringcontrol::printKeyword("Equal_Op", yytext);
-	}else{
-		stringcontrol::printKeyword("Relational_Op", yytext);
-	}
+	rules.relationalOpRule();
 }
 
 {LOGICAL_OP} {
-	stringcontrol::printKeyword("logic_op", yytext);
+	rules.logicalOpRule();
 }
 
 {ARITHMETIC_OPERATOR} {
-	stringcontrol::printKeyword("arithmetic_operator", yytext);
+	rules.arithmeticOpRule();
 }
 
 {LETTERS_AND_DIGITS} {
-	string word(yytext);
-  	map<string, int>::iterator it;
-	it = variables.find(word);
-	if (it != variables.end()) {
-		stringcontrol::printKeyword("id", to_string(it->second).c_str());
-	} else {
-		printf("%s",yytext);
-	}
+	rules.variableLookupRule();
 }
 
 {SPACES_AND_TABS}
