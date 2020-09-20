@@ -43,4 +43,18 @@ namespace stringcontrol
         }
         return splitted;
     }
+
+   
+    bool isSpecialChar(unsigned char c) {
+        return (c == ' '  || c == '\n' || c == '\r' ||
+                c == '\t' || c == '\v' || c == '\f' ||
+                c == '*'  || c == ';'  || c == '['  ||
+                c == ']'  || c == '('  || c == ')'  ||
+                c == ',');
+    }
+
+    void removeSpecialChars(string *word){
+        word->erase(remove_if(word->begin(), word->end(), isSpecialChar), word->end());
+    }
+
 };
