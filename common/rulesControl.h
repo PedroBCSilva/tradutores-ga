@@ -13,7 +13,7 @@ using namespace std;
 class RulesControl
 {
     private:
-        map<string, string> specialCharacters = {{"(", "l_paren"}, {")", "r_paren"}, {"{", "l_bracket"}, {"}", "​r_bracket"}, {",", "comma"}, {";", "semicolon"}, {"&", "ampersand"}};
+        map<string, string> specialCharacters = {{"(", "l_paren"}, {")", "r_paren"}, {"{", "l_bracket"}, {"}", "r_bracket"}, {",", "comma"}, {";", "semicolon"}, {"&", "ampersand"}, {"#", "hashtag"}};
         int variableIds = 0;
         map<string, int> variables;
     public:

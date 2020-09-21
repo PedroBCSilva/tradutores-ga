@@ -24,10 +24,10 @@ SUB_OP [-]
 MULT_OP [*]
 DIV_OP [/]
 ARITHMETIC_OPERATOR {SUM_OP}|{SUB_OP}|{MULT_OP}|{DIV_OP}
-SPECIAL_CHARACTERS (\(|\)|\{|\}|,|;)
+SPECIAL_CHARACTERS (\(|\)|\{|\}|,|;|#)
 
 TYPE (int|byte|boolean|char|long|float|double|short|string|void)
-RESERVED_KEYWORD ({TYPE}|abstract|assert|break|case|class|const|continue|default|enum|extends|false|final|goto|implements|import|instanceof|interface|native|new|null|package|private|protected|public|return|static|strictfp|super|synchronized|this|throw|throws|transient|true|volatile)
+RESERVED_KEYWORD ({TYPE}|abstract|assert|break|case|class|const|continue|default|enum|extends|false|final|goto|implements|import|instanceof|interface|native|new|null|package|private|protected|public|return|static|strictfp|super|synchronized|this|throw|throws|transient|true|volatile|include)
 RESERVED_KEYWORD_WITH_OPENING_CHARACTER (clrscr|scanf|print|printf|catch|do|else|for|finally|if|switch|try|while|getch)
 
 VARIABLE ({TYPE}(\*)?{SINGLE_SPACE}(\*)?(\ )*{LETTERS_AND_DIGITS}(,(\ )*(\*)?(\ )*{LETTERS_AND_DIGITS})*(\ )*;)
