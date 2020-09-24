@@ -14,7 +14,7 @@ RulesControl rules;
 STRING_LITERAL (\"[^\n"]+\")
 DIGIT [0-9]+
 LETTERS_AND_DIGITS [a-zA-Z0-9]*
-INCLUDE #include(\ )*<{LETTERS_AND_DIGITS}>
+INCLUDE #include(\ )*(<|\"){LETTERS_AND_DIGITS}(<|\")
 
 RELATIONAL_OP (\ )*(==|>=|<=|=|<|>|!==)(\ )*
 LOGICAL_OP (\ )*(&&|\|\|)(\ )*
