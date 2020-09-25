@@ -1,3 +1,6 @@
+#ifndef RULESCONTROL_H
+#define RULESCONTROL_H
+
 #include <string>
 #include <stdio.h>
 #include <string.h>
@@ -7,15 +10,18 @@
 #include <vector>
 
 #include "stringControl.h"
+#include "scope.h"
 
 using namespace std;
 
 class RulesControl
 {
     private:
-        map<string, string> specialCharacters = {{"(", "l_paren"}, {")", "r_paren"}, {"{", "l_bracket"}, {"}", "r_bracket"}, {",", "comma"}, {";", "semicolon"}, {"&", "ampersand"}, {"#", "hashtag"}};
+        map<string, string> specialCharacters = {{"[", "l_bracket"},{"]", "r_bracket"},{"(", "l_paren"}, {")", "r_paren"}, {"{", "l_curly_bracket"}, {"}", "r_curly_bracket"}, {",", "comma"}, {";", "semicolon"}, {"&", "ampersand"}, {"#", "hashtag"}};
         int variableIds = 0;
-        map<string, int> variables;
+        int methodIds = 0;
+        Scope* globalScope = new Scope("global");
+        Scope* currentScope = globalScope;
     public:
     void stringLiteralRule(){
         char literalString[100];
@@ -30,11 +36,22 @@ class RulesControl
         stringcontrol::printKeyword("string_literal", literalString);
     }
 
-    void addVariable(string name){
-        variableIds++;
+    void addMethod(string name){
         stringcontrol::removeSpecialChars(&name);
-        variables[name] = variableIds;
-        stringcontrol::printKeyword("id", to_string(variableIds).c_str());
+        currentScope = new Scope(name);
+        globalScope->addMethod(currentScope);
+        stringcontrol::printKeyword("id",to_string(globalScope->getLastId()).c_str());
+        stringcontrol::printKeyword("l_paren","(");
+    }
+
+    void methodDeclarationRule() {
+        string word(yytext);
+        vector<string> splitted = stringcontrol::stringSplit(word.c_str(),' ');
+        string type = splitted.at(0);
+        stringcontrol::printKeyword("reserved_word", type.c_str());
+        stringcontrol::removeSubstr(&type, &word);
+        stringcontrol::removeSpecialChars(&word);
+        addMethod(word);
     }
 
     void variableDeclarationRule() {
@@ -45,18 +62,22 @@ class RulesControl
         stringcontrol::removeSubstr(&type, &word);
         splitted = stringcontrol::stringSplit(word.c_str(),',');
         for(string& part : splitted) {
-            addVariable(part);
+            currentScope->addVariable(part);
         }
     }
 
     void variableLookupRule(){
         string word(yytext);
-        map<string, int>::iterator it;
-        it = variables.find(word);
-        if (it != variables.end()) {
-            stringcontrol::printKeyword("id", to_string(it->second).c_str());
+        int id = globalScope->find(word);
+        if (id >= 0) {
+            stringcontrol::printKeyword("id", ( to_string(globalScope-> id) + "." +  to_string(id)).c_str());
         } else {
+            id = currentScope -> find(word);
+            if (id >= 0) {
+                stringcontrol::printKeyword("id", ( to_string(currentScope-> id) + "." +  to_string(id)).c_str());
+            }else{
             printf("%s",yytext);
+            }
         }
     }
 
@@ -71,7 +92,7 @@ class RulesControl
             stringcontrol::removeSpecialChars(&type);
             stringcontrol::printKeyword("reserved_word", type.c_str());
             stringcontrol::removeSubstr(&type, &part);
-            addVariable(part);
+            currentScope->addVariable(part);
         }
     }
 
@@ -122,3 +143,4 @@ class RulesControl
         stringcontrol::printKeyword("Relational_Op", ">");
     }
 };
+#endif
