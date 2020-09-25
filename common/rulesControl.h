@@ -17,11 +17,11 @@ using namespace std;
 class RulesControl
 {
     private:
-        map<string, string> specialCharacters = {{"(", "l_paren"}, {")", "r_paren"}, {"{", "l_bracket"}, {"}", "r_bracket"}, {",", "comma"}, {";", "semicolon"}, {"&", "ampersand"}, {"#", "hashtag"}};
+        map<string, string> specialCharacters = {{"[", "l_bracket"},{"]", "r_bracket"},{"(", "l_paren"}, {")", "r_paren"}, {"{", "l_curly_bracket"}, {"}", "r_curly_bracket"}, {",", "comma"}, {";", "semicolon"}, {"&", "ampersand"}, {"#", "hashtag"}};
         int variableIds = 0;
         int methodIds = 0;
-        Scope* globalScope = new Scope(0,"");
-        Scope* currentScope;
+        Scope* globalScope = new Scope("global");
+        Scope* currentScope = globalScope;
     public:
     void stringLiteralRule(){
         char literalString[100];
