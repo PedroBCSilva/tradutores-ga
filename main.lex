@@ -11,7 +11,7 @@ RulesControl rules;
 
 %}
 
-STRING_LITERAL (\"[^\n"]+\")
+STRING_LITERAL (\"[^\n"]+\")|""
 DIGIT [0-9]+
 LETTERS_AND_DIGITS [a-zA-Z0-9]*
 INCLUDE #include(\ )*(<|\"){LETTERS_AND_DIGITS}(<|\")
@@ -32,8 +32,8 @@ RESERVED_KEYWORD ({TYPE}|abstract|assert|break|case|class|const|continue|default
 RESERVED_KEYWORD_WITH_OPENING_CHARACTER (clrscr|scanf|print|printf|catch|do|else|for|finally|if|switch|try|while|getch)
 
 VARIABLE ({TYPE}(\*)?{SINGLE_SPACE}(\*)?(\ )*{LETTERS_AND_DIGITS}(,(\ )*(\*)?(\ )*{LETTERS_AND_DIGITS})*(\ )*;)
+METHOD {TYPE}(\*)?{SINGLE_SPACE}(\*)?(\ )*{LETTERS_AND_DIGITS}
 ARGUMENT (\({TYPE}(\*)?{SINGLE_SPACE}(\*)?(\ )*{LETTERS_AND_DIGITS}(\ )*(,(\ )*{TYPE}(\*)?(\ )*(\*)?(\ )*{LETTERS_AND_DIGITS})*\))
-
 
 SPACES_AND_TABS ([ \t\n\r])
 COMMENT ("//".*)
@@ -49,6 +49,7 @@ COMMENT_BLOCK ("/*"[^*/]*"*/")
 {RESERVED_KEYWORD} rules.reservedWordRule();
 {RESERVED_KEYWORD_WITH_OPENING_CHARACTER}/(\ )?{SPECIAL_CHARACTERS} rules.reservedWordRule();
 {VARIABLE} rules.variableDeclarationRule();
+{METHOD} rules.methodDeclarationRule();
 {ARGUMENT} rules.argumentRule();
 {SPECIAL_CHARACTERS} rules.specialCharsRule();
 {RELATIONAL_OP} rules.relationalOpRule();

@@ -3,7 +3,7 @@
  
 void CalculoMedia() 
 { 
-    float NotaDaP1, NotaDaP2; 
+    float NotaDaP1[], NotaDaP2; 
     float Media; 
      
     clrscr(); // Limpa a tela  

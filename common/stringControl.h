@@ -1,3 +1,6 @@
+#ifndef STRINGCONTROL_H
+#define STRINGCONTROL_H
+
 #include <string>
 #include <stdio.h>
 
@@ -56,3 +59,4 @@ namespace stringcontrol
     }
 
 };
+#endif
