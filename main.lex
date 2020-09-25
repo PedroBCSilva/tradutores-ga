@@ -14,7 +14,7 @@ RulesControl rules;
 STRING_LITERAL (\"[^\n"]+\")
 DIGIT [0-9]+
 LETTERS_AND_DIGITS [a-zA-Z0-9]*
-INCLUDE #include(\ )*(<|\"){LETTERS_AND_DIGITS}(<|\")
+INCLUDE (#include)(\ )*((<({LETTERS_AND_DIGITS}(.[a-zA-Z])?)>)|\"({LETTERS_AND_DIGITS}(.[a-zA-Z])?)\")
 
 RELATIONAL_OP (\ )*(==|>=|<=|=|<|>|!==)(\ )*
 LOGICAL_OP (\ )*(&&|\|\|)(\ )*
@@ -46,6 +46,7 @@ COMMENT_BLOCK ("/*"[^*/]*"*/")
 {STRING_LITERAL} rules.stringLiteralRule();
 {DIGIT} rules.digitRule();
 {FLOAT_NUM} rules.floatNumRule();
+{INCLUDE} rules.includeRule();
 {RESERVED_KEYWORD} rules.reservedWordRule();
 {RESERVED_KEYWORD_WITH_OPENING_CHARACTER}/(\ )?{SPECIAL_CHARACTERS} rules.reservedWordRule();
 {VARIABLE} rules.variableDeclarationRule();

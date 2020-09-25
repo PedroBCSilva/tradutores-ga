@@ -109,4 +109,16 @@ class RulesControl
     void arithmeticOpRule(){
         stringcontrol::printKeyword("arithmetic_operator", yytext);
     }
+
+    void includeRule(){
+        string text(yytext);
+        stringcontrol::printKeyword("hashtag","#");
+        stringcontrol::printKeyword("reserved_word", "include");
+        unsigned startText = text.find("<");
+        unsigned endText = text.find(">");
+        string includeText = text.substr (startText + 1, endText-startText);
+        stringcontrol::printKeyword("Relational_Op", "<");
+        stringcontrol::printKeyword("string_literal", includeText.c_str());
+        stringcontrol::printKeyword("Relational_Op", ">");
+    }
 };
